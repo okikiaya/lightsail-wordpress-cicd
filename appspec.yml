@@ -1,0 +1,19 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /opt/bitnami/wordpress
+    overwrite: yes
+permissions:
+  - object: /opt/bitnami/wordpress
+    owner: bitnami
+    group: bitnami
+    mode: 755
+    type:
+      - file
+      - directory
+hooks:
+  ApplicationStart:
+    - location: scripts/restart_services.sh
+      timeout: 300
+      runas: root

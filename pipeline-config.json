@@ -1,0 +1,61 @@
+{
+  "pipeline": {
+    "name": "lightsail-cicd-pipeline",
+    "roleArn": "arn:aws:iam::875549173295:role/CodePipelineServiceRole",
+    "artifactStore": {
+      "type": "S3",
+      "location": "lightsail-wordpress-pipeline-875549173295",
+      "region": "eu-west-2"
+    },
+    "stages": [
+      {
+        "name": "Source",
+        "actions": [
+          {
+            "name": "SourceAction",
+            "actionTypeId": {
+              "category": "Source",
+              "owner": "ThirdParty",
+              "provider": "GitHub",
+              "version": "1"
+            },
+            "configuration": {
+              "Owner": "okikiayas",
+              "Repo": "CodeDeployGitHubDemo",
+              "Branch": "main",
+              "OAuthToken": "{{resolve:ssm:/github/personal-access-token}}"
+            },
+            "outputArtifacts": [
+              {
+                "name": "SourceOutput"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Deploy",
+        "actions": [
+          {
+            "name": "DeployAction",
+            "actionTypeId": {
+              "category": "Deploy",
+              "owner": "AWS",
+              "provider": "CodeDeploy",
+              "version": "1"
+            },
+            "configuration": {
+              "ApplicationName": "lightsail-wordpress-app",
+              "DeploymentGroupName": "lightsail-deployment-group"
+            },
+            "inputArtifacts": [
+              {
+                "name": "SourceOutput"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
